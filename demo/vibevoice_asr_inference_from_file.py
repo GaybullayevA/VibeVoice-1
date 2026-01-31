@@ -396,6 +396,10 @@ def load_dataset_and_concatenate(
 
 def main():
     parser = argparse.ArgumentParser(description="VibeVoice ASR Batch Inference Demo")
+
+    def _has_xpu() -> bool:
+        return hasattr(torch.backends, "xpu") and torch.backends.xpu.is_available()
+
     parser.add_argument(
         "--model_path", 
         type=str, 
@@ -442,7 +446,7 @@ def main():
     parser.add_argument(
         "--device", 
         type=str, 
-        default="cuda" if torch.cuda.is_available() else ("xpu" if torch.backends.xpu.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu") ),
+        default="cuda" if torch.cuda.is_available() else ("xpu" if _has_xpu() else ("mps" if torch.backends.mps.is_available() else "cpu")),
         choices=["cuda", "cpu", "mps","xpu", "auto"],
         help="Device to run inference on"
     )
